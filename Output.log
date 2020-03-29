@@ -1,3 +1,6 @@
 15:51:09.718 [main] DEBUG c.c.f.a.Booking - Writing restaurant list in dir/output/AllRestaurantDetails.txt is : Success
 15:51:09.723 [main] DEBUG c.c.f.a.Booking - Writing restaurants with rating<4 in dir/output/RatingBasedRestaurants.txt is : Success
 15:51:09.725 [main] DEBUG c.c.f.a.Booking - Writing restaurant list(available from 10:00 with duration of 1Hr) in dir/output/TimingBasedRestaurants.txt is : Success
+08:04:36.193 [main] DEBUG c.c.f.a.Booking - Writing restaurant list in dir/output/AllRestaurantDetails.txt is : Success
+08:04:36.199 [main] DEBUG c.c.f.a.Booking - Writing restaurants with rating<4 in dir/output/RatingBasedRestaurants.txt is : Success
+08:04:36.201 [main] DEBUG c.c.f.a.Booking - Writing restaurant list(available from 10:00 with duration of 1Hr) in dir/output/TimingBasedRestaurants.txt is : Success
