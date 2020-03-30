@@ -16,23 +16,23 @@ import com.cts.foodbooking.model.Review;
 
 public class BookingDAO {
 
-	static Path restaurantPath = Paths.get("dir", "inputs", "restaurant.csv");
-	static Path reviewPath = Paths.get("dir", "inputs", "review.csv");
-	static Path dishesPath = Paths.get("dir", "inputs", "dishes.csv");
+	Path restaurantPath = Paths.get("dir", "inputs", "restaurant.csv");
+	Path reviewPath = Paths.get("dir", "inputs", "review.csv");
+	Path dishesPath = Paths.get("dir", "inputs", "dishes.csv");
 
-	public static List<Restaurant> fetchRestaurantDetails() {
+	public List<Restaurant> fetchRestaurantDetails() {
 		List<Restaurant> resList = null;
 		try (Stream<String> bufferData = Files.newBufferedReader(restaurantPath).lines()) {
-			resList = bufferData.map(BookingDAO::getRestaurant).collect(Collectors.toList());
+			resList = bufferData.map(t->getRestaurant(t)).collect(Collectors.toList());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return resList;
 	}
 
-	public static String writeRestaurantList(List<Restaurant> resList) {
+	public String writeRestaurantList(List<Restaurant> resList,String folderPath) {
 		try {
-			Files.write(Paths.get("dir", "output", "AllRestaurantDetails.txt"), resList.toString().getBytes(),
+			Files.write(Paths.get("dir", folderPath, "AllRestaurantDetails.txt"), resList.toString().getBytes(),
 					StandardOpenOption.CREATE);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -41,9 +41,9 @@ public class BookingDAO {
 		return "Success";
 	}
 	
-	public static String writeRatingBasedRestaurant(List<Restaurant> resList) {
+	public String writeRatingBasedRestaurant(List<Restaurant> resList,String folderPath) {
 		try {
-			Files.write(Paths.get("dir", "output", "RatingBasedRestaurants.txt"), resList.toString().getBytes(),
+			Files.write(Paths.get("dir", folderPath, "RatingBasedRestaurants.txt"), resList.toString().getBytes(),
 					StandardOpenOption.CREATE);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -52,9 +52,9 @@ public class BookingDAO {
 		return "Success";
 	}
 	
-	public static String writeTimingBasedRestaurant(List<Restaurant> resList) {
+	public String writeTimingBasedRestaurant(List<Restaurant> resList,String folderPath) {
 		try {
-			Files.write(Paths.get("dir", "output", "TimingBasedRestaurants.txt"), resList.toString().getBytes(),
+			Files.write(Paths.get("dir", folderPath, "TimingBasedRestaurants.txt"), resList.toString().getBytes(),
 					StandardOpenOption.CREATE);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -63,19 +63,19 @@ public class BookingDAO {
 		return "Success";
 	}
 
-	private static Restaurant getRestaurant(String data) {
+	private Restaurant getRestaurant(String data) {
 		String[] input = data.split(",");
 		return new Restaurant(Integer.parseInt(input[0]), input[1], Double.parseDouble(input[2]), getTime(input[3]),
 				getTime(input[4]), getReviewList(Integer.parseInt(input[0])),
 				getDishesList(Integer.parseInt(input[0])));
 	}
 
-	private static LocalTime getTime(String input) {
+	private LocalTime getTime(String input) {
 		String[] time = input.split(":");
 		return LocalTime.of(Integer.parseInt(time[0]), Integer.parseInt(time[1]), Integer.parseInt(time[2]));
 	}
 
-	private static List<Review> getReviewList(int restaurantId) {
+	private List<Review> getReviewList(int restaurantId) {
 		List<Review> reviewList = null;
 		try (Stream<String> bufferData = Files.newBufferedReader(reviewPath).lines()) {
 			reviewList = bufferData.filter(t -> Integer.parseInt(t.split(",")[0].trim()) == restaurantId)
@@ -88,7 +88,7 @@ public class BookingDAO {
 
 	}
 
-	private static Review getReview(String[] input, int restaurantId) {
+	private Review getReview(String[] input, int restaurantId) {
 		if (input.length == 2) {
 			return new Review(restaurantId, input[1]);
 		} else {
@@ -101,7 +101,7 @@ public class BookingDAO {
 
 	}
 
-	private static List<Dishes> getDishesList(int restaurantId) {
+	private List<Dishes> getDishesList(int restaurantId) {
 		List<Dishes> dishesList = null;
 		try (Stream<String> bufferData = Files.newBufferedReader(dishesPath).lines()) {
 			dishesList = bufferData.filter(t -> Integer.parseInt(t.split(",")[0].trim()) == restaurantId)
@@ -114,7 +114,7 @@ public class BookingDAO {
 
 	}
 
-	private static Dishes getDishes(String[] input, int restaurantId) {
+	private Dishes getDishes(String[] input, int restaurantId) {
 		return new Dishes(restaurantId, input[1], Integer.parseInt(input[2]), Integer.parseInt(input[3]));
 	}
 

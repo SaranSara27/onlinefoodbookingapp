@@ -15,43 +15,43 @@ import com.cts.foodbooking.model.Restaurant;
 
 public class BookingService {
 	
-	final static Logger log = LoggerFactory.getLogger(Booking.class);
+	Logger log = LoggerFactory.getLogger(Booking.class);
+	
+	BookingDAO dao = new BookingDAO();
 
-	public static String fetchRestaurantDetails() {
-		List<Restaurant> resList = BookingDAO.fetchRestaurantDetails();
+	public String fetchRestaurantDetails() {
+		List<Restaurant> resList = dao.fetchRestaurantDetails();
 		log.debug("resList in fetchRestaurantDetails ={}",resList);
-		if (resList == null) {
-			return "failure";
+		if (resList == null || resList.isEmpty()) {
+			return "Failure";
 		}
-		return BookingDAO.writeRestaurantList(resList);
+		return dao.writeRestaurantList(resList,"output");
 	}
 
-	public static String ratingBasedRestaurant(int rating) {
-		List<Restaurant> list = BookingDAO.fetchRestaurantDetails().stream().filter(r -> r.getRatings() < rating)
+	public String ratingBasedRestaurant(int rating) {
+		List<Restaurant> list = dao.fetchRestaurantDetails().stream().filter(r -> r.getRatings() < rating)
 				.collect(Collectors.toList());
 		log.debug("resList in ratingBasedRestaurant={}",list);
-		if (list == null) {
-			return "failure";
+		if (list == null || list.isEmpty()) {
+			return "Failure";
 		}
-		return BookingDAO.writeRatingBasedRestaurant(list);
+		return dao.writeRatingBasedRestaurant(list,"output");
 	}
 
-	public static String timingBasedRestaurant(LocalTime startTime, Duration frequency) {
+	public String timingBasedRestaurant(LocalTime startTime, Duration frequency) {
 
-		List<Restaurant> restaurantList = BookingDAO.fetchRestaurantDetails().stream()
+		List<Restaurant> restaurantList = dao.fetchRestaurantDetails().stream()
 				.filter(t -> filterTime(t, startTime, frequency)).collect(Collectors.toList());
 		log.debug("resList in timingBasedRestaurant={}",restaurantList);
-		if (restaurantList == null) {
-			return "failure";
+		if (restaurantList == null || restaurantList.isEmpty()) {
+			return "Failure";
 		}
-		return BookingDAO.writeTimingBasedRestaurant(restaurantList);
+		return dao.writeTimingBasedRestaurant(restaurantList,"output");
 
 	}
 
-	private static boolean filterTime(Restaurant res, LocalTime startTime, Duration frequency) {
-		log.debug("startTime {}",startTime);
+	private boolean filterTime(Restaurant res, LocalTime startTime, Duration frequency) {
 		LocalTime endTime = startTime.plusHours(frequency.toHours());
-		log.debug("endTime {}",endTime);
 		if ((res.getOpeningTime().equals(startTime) || res.getOpeningTime().isBefore(startTime))
 				&& (res.getClosingTime().equals(endTime) || res.getClosingTime().isAfter(endTime))) {
 			return true;
